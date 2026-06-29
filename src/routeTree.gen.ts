@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as RestaurantRouteImport } from './routes/restaurant'
 import { Route as MenuRouteImport } from './routes/menu'
 import { Route as HostelRouteImport } from './routes/hostel'
@@ -20,6 +21,11 @@ import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
+const ReviewsRoute = ReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RestaurantRoute = RestaurantRouteImport.update({
   id: '/restaurant',
   path: '/restaurant',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/hostel': typeof HostelRoute
   '/menu': typeof MenuRoute
   '/restaurant': typeof RestaurantRoute
+  '/reviews': typeof ReviewsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/hostel': typeof HostelRoute
   '/menu': typeof MenuRoute
   '/restaurant': typeof RestaurantRoute
+  '/reviews': typeof ReviewsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/hostel': typeof HostelRoute
   '/menu': typeof MenuRoute
   '/restaurant': typeof RestaurantRoute
+  '/reviews': typeof ReviewsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/hostel'
     | '/menu'
     | '/restaurant'
+    | '/reviews'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/hostel'
     | '/menu'
     | '/restaurant'
+    | '/reviews'
   id:
     | '__root__'
     | '/'
@@ -145,6 +156,7 @@ export interface FileRouteTypes {
     | '/hostel'
     | '/menu'
     | '/restaurant'
+    | '/reviews'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -158,10 +170,18 @@ export interface RootRouteChildren {
   HostelRoute: typeof HostelRoute
   MenuRoute: typeof MenuRoute
   RestaurantRoute: typeof RestaurantRoute
+  ReviewsRoute: typeof ReviewsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reviews': {
+      id: '/reviews'
+      path: '/reviews'
+      fullPath: '/reviews'
+      preLoaderRoute: typeof ReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/restaurant': {
       id: '/restaurant'
       path: '/restaurant'
@@ -246,6 +266,7 @@ const rootRouteChildren: RootRouteChildren = {
   HostelRoute: HostelRoute,
   MenuRoute: MenuRoute,
   RestaurantRoute: RestaurantRoute,
+  ReviewsRoute: ReviewsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
