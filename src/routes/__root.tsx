@@ -14,6 +14,8 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
 import { ChatWidget } from "../components/chat-widget";
+import { CustomerReviewsSection } from "../components/customer-reviews";
+import { useRouterState } from "@tanstack/react-router";
 
 function NotFoundComponent() {
   return (
