@@ -101,6 +101,20 @@ function ReviewsPage() {
             </div>
           </div>
 
+          {/* Write a review CTA */}
+          <div className="mb-6 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setFormOpen(true)}
+              className="btn-gold inline-flex items-center gap-2"
+            >
+              <PenLine className="size-4" />
+              Write a Review
+            </button>
+          </div>
+
+
+
           {/* Search + filters */}
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="relative w-full md:max-w-sm">
