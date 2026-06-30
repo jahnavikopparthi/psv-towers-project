@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Search, Star } from "lucide-react";
+import { Search, Star, PenLine } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
 import { ReviewCard, ReviewStars, PagerButton } from "@/components/customer-reviews";
-import { ALL_REVIEWS, REVIEW_STATS, type Review } from "@/lib/reviews-data";
+import { ReviewFormDialog } from "@/components/review-form-dialog";
+import { REVIEW_STATS, type Review } from "@/lib/reviews-data";
+import { useAllReviews } from "@/lib/reviews-store";
 
 export const Route = createFileRoute("/reviews")({
   head: () => ({
@@ -49,11 +51,14 @@ function ReviewsPage() {
   const [filter, setFilter] = useState<Filter>("All");
   const [q, setQ] = useState("");
   const [visible, setVisible] = useState(PAGE_SIZE);
+  const [formOpen, setFormOpen] = useState(false);
 
-  const filtered = useMemo(() => applyFilter(ALL_REVIEWS, filter, q), [filter, q]);
+  const allReviews = useAllReviews();
+  const filtered = useMemo(() => applyFilter(allReviews, filter, q), [allReviews, filter, q]);
   const shown = filtered.slice(0, visible);
 
   const filters: Filter[] = ["All", "Hostel", "Restaurant", "Latest", "Highest"];
+
 
   return (
     <>
@@ -88,13 +93,27 @@ function ReviewsPage() {
             </div>
             <div>
               <div className="font-display text-3xl font-bold text-brand">
-                {ALL_REVIEWS.length}+
+                {allReviews.length}+
               </div>
               <p className="mt-1 text-xs uppercase tracking-wider text-muted-foreground">
                 Written Reviews
               </p>
             </div>
           </div>
+
+          {/* Write a review CTA */}
+          <div className="mb-6 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setFormOpen(true)}
+              className="btn-gold inline-flex items-center gap-2"
+            >
+              <PenLine className="size-4" />
+              Write a Review
+            </button>
+          </div>
+
+
 
           {/* Search + filters */}
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -183,6 +202,9 @@ function ReviewsPage() {
           )}
         </div>
       </section>
+
+      <ReviewFormDialog open={formOpen} onOpenChange={setFormOpen} />
     </>
   );
 }
+
