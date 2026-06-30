@@ -1,4 +1,5 @@
 export type ReviewType = "Hostel" | "Restaurant";
+export type Gender = "male" | "female";
 
 export interface Review {
   id: number;
@@ -7,6 +8,8 @@ export interface Review {
   rating: number;
   text: string;
   date: string; // ISO
+  title?: string;
+  gender?: Gender;
 }
 
 const hostelReviews: Omit<Review, "id" | "type">[] = [
