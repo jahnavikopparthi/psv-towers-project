@@ -103,6 +103,7 @@ function RootComponent() {
         {!hideReviews && <CustomerReviewsSection />}
         <SiteFooter />
         <ChatWidget />
+        <Toaster position="top-center" richColors />
       </div>
     </QueryClientProvider>
   );
