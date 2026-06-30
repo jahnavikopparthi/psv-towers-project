@@ -15,6 +15,7 @@ import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
 import { ChatWidget } from "../components/chat-widget";
 import { CustomerReviewsSection } from "../components/customer-reviews";
+import { Toaster } from "../components/ui/sonner";
 import { useRouterState } from "@tanstack/react-router";
 
 function NotFoundComponent() {
