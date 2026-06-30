@@ -141,13 +141,37 @@ const extra: Review[] = [
 
 export const ALL_REVIEWS: Review[] = [...baseList, ...extra];
 
-export function avatarFor(name: string) {
-  // DiceBear public avatar — deterministic from name
-  const seed = encodeURIComponent(name);
-  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&radius=50&backgroundType=gradientLinear`;
+// --- Gender detection from common Indian first names ---
+const FEMALE_FIRST = new Set([
+  "sravani","lakshmi","priya","priyanka","anusha","divya","meghana","pooja","harshita","keerthi","sahithi","bhavana","sneha","rithika","vaishnavi","nandini","manasa","tejaswini","ramya","aishwarya","sindhu","chaitanya","yamini","pravallika","bhargavi","sushma","lasya","mounika","charitha","akshara","indu","rakshitha","hema","soumya","janaki","nikitha","rohini","akhila","snigdha","vijaya","saanvi","tanvi","eshika","pranavi","riya","aparajita","sania","vasudha","krithika","maithili","pavithra","ananya","charvi","dakshita","esha","faiza","naga","anjali","sirisha","sumalatha","madhavi","deepika","lalitha","manjula","harika","sailaja","indira","saritha","aparna","vandana","swathi","ishita","sonia","komal","aarti","megha","shruti","kriti","trisha","reema","reshma","kavya","kavitha","geetha","sangeetha","madhuri","rashmi","shilpa","sita","gita","meera","neha","ritu","sunita","saraswati","durga","parvati","kamala","shanti","usha","rekha","asha","latha","sujatha","padma","vidya","radha","sree","devi"
+]);
+const MALE_FIRST = new Set([
+  "ravi","suresh","krishna","mahesh","karthik","vinod","phaneendra","raghu","praveen","srinivas","yashwanth","rajesh","phani","gopinath","bhanu","murali","naresh","tarun","hari","sai","aditya","bharat","chandu","divakar","eshwar","farhan","ganesh","harish","jagadish","kalyan","lokesh","madhav","nithin","omkar","pranay","qadir","ramesh","surya","trinath","arjun","raj","ravi","kumar","kiran","mahesh","ramana","venkat","ram","prasad","babu","reddy","vijay","ajay","sanjay","rohit","amit","sumit","rahul","manoj","anil","sunil","deepak","vinay","vivek","yash","akash","sandeep","kishore","gopi","balaji","manish","abhishek","naveen","mohan","murthy","varma","teja","kumar"
+]);
+
+export function detectGender(name: string): Gender {
+  const first = (name || "").toLowerCase().trim().split(/\s+/)[0].replace(/[^a-z]/g, "");
+  if (MALE_FIRST.has(first)) return "male";
+  if (FEMALE_FIRST.has(first)) return "female";
+  // suffix heuristic — common Indian female endings
+  if (/(?:a|i|ya|ka|tha|sha|ti|ri|na|la|ma|da|ee|ika|ini|itha|asree|priya|devi|sri)$/.test(first)) return "female";
+  return "male";
+}
+
+function hashString(s: string) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return h;
+}
+
+export function avatarFor(name: string, gender?: Gender) {
+  const g = gender ?? detectGender(name);
+  const idx = hashString(name) % 99; // randomuser.me has 0..99
+  return `https://randomuser.me/api/portraits/${g === "female" ? "women" : "men"}/${idx}.jpg`;
 }
 
 export const REVIEW_STATS = {
   average: 4.8,
   totalLabel: "500+",
 };
+
