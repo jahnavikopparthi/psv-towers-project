@@ -93,7 +93,7 @@ function ReviewsPage() {
             </div>
             <div>
               <div className="font-display text-3xl font-bold text-brand">
-                {ALL_REVIEWS.length}+
+                {allReviews.length}+
               </div>
               <p className="mt-1 text-xs uppercase tracking-wider text-muted-foreground">
                 Written Reviews
