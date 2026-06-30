@@ -51,11 +51,14 @@ function ReviewsPage() {
   const [filter, setFilter] = useState<Filter>("All");
   const [q, setQ] = useState("");
   const [visible, setVisible] = useState(PAGE_SIZE);
+  const [formOpen, setFormOpen] = useState(false);
 
-  const filtered = useMemo(() => applyFilter(ALL_REVIEWS, filter, q), [filter, q]);
+  const allReviews = useAllReviews();
+  const filtered = useMemo(() => applyFilter(allReviews, filter, q), [allReviews, filter, q]);
   const shown = filtered.slice(0, visible);
 
   const filters: Filter[] = ["All", "Hostel", "Restaurant", "Latest", "Highest"];
+
 
   return (
     <>
