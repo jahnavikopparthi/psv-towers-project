@@ -202,6 +202,9 @@ function ReviewsPage() {
           )}
         </div>
       </section>
+
+      <ReviewFormDialog open={formOpen} onOpenChange={setFormOpen} />
     </>
   );
 }
+
