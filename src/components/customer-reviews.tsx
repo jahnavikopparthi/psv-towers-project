@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, Quote, ChevronLeft, ChevronRight, PenLine } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ALL_REVIEWS, avatarFor, REVIEW_STATS, type Review } from "@/lib/reviews-data";
+import { useAllReviews } from "@/lib/reviews-store";
+import { ReviewFormDialog } from "./review-form-dialog";
 
 function Stars({ n = 5 }: { n?: number }) {
   return (
@@ -17,16 +19,51 @@ function Stars({ n = 5 }: { n?: number }) {
   );
 }
 
+function relativeTime(iso: string): string {
+  const t = new Date(iso).getTime();
+  if (Number.isNaN(t)) return "";
+  const diff = Date.now() - t;
+  const sec = Math.floor(diff / 1000);
+  if (sec < 60) return "Just now";
+  const min = Math.floor(sec / 60);
+  if (min < 60) return `${min} min${min > 1 ? "s" : ""} ago`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr} hour${hr > 1 ? "s" : ""} ago`;
+  const day = Math.floor(hr / 24);
+  if (day < 7) return `${day} day${day > 1 ? "s" : ""} ago`;
+  return new Date(iso).toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 export function ReviewCard({ r, compact = false }: { r: Review; compact?: boolean }) {
+  const [imgOk, setImgOk] = useState(true);
+  const initials = r.name
+    .split(/\s+/)
+    .map((p) => p[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
   return (
     <div className="card-soft flex h-full flex-col p-5">
       <div className="flex items-center gap-3">
-        <img
-          src={avatarFor(r.name)}
-          alt={r.name}
-          loading="lazy"
-          className="size-11 rounded-full border border-gold/40 bg-gold-soft object-cover"
-        />
+        {imgOk ? (
+          <img
+            src={avatarFor(r.name, r.gender)}
+            alt={r.name}
+            loading="lazy"
+            onError={() => setImgOk(false)}
+            className="size-11 rounded-full border border-gold/40 object-cover"
+          />
+        ) : (
+          <div className="flex size-11 items-center justify-center rounded-full border border-gold/40 bg-brand-soft text-sm font-semibold text-brand">
+            {initials}
+          </div>
+        )}
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-semibold">{r.name}</div>
           <div className="text-[11px] uppercase tracking-wider text-brand">
@@ -35,9 +72,17 @@ export function ReviewCard({ r, compact = false }: { r: Review; compact?: boolea
         </div>
         <Quote className="size-5 text-gold/60" />
       </div>
-      <div className="mt-3"><Stars n={r.rating} /></div>
+      <div className="mt-3 flex items-center justify-between">
+        <Stars n={r.rating} />
+        <span className="text-[11px] text-muted-foreground">{relativeTime(r.date)}</span>
+      </div>
+      {r.title && (
+        <h4 className="mt-3 line-clamp-1 font-display text-base font-semibold text-foreground">
+          {r.title}
+        </h4>
+      )}
       <p
-        className={`mt-3 text-sm leading-relaxed text-muted-foreground ${
+        className={`mt-2 text-sm leading-relaxed text-muted-foreground ${
           compact ? "line-clamp-4" : ""
         }`}
       >
@@ -64,7 +109,7 @@ function SummaryHeader() {
   );
 }
 
-/** Auto-scrolling marquee carousel */
+/** Auto-scrolling marquee carousel with arrows, pause-on-hover, infinite loop */
 function ReviewMarquee({ reviews }: { reviews: Review[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(false);
@@ -72,49 +117,82 @@ function ReviewMarquee({ reviews }: { reviews: Review[] }) {
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
+    // initialize from 0 — looping wraps via half-width
     let raf = 0;
     let last = performance.now();
     const step = (now: number) => {
       const dt = now - last;
       last = now;
-      if (!paused) {
+      if (el && !paused) {
         el.scrollLeft += (dt / 1000) * 40; // 40px/sec
         const half = el.scrollWidth / 2;
-        if (el.scrollLeft >= half) el.scrollLeft -= half;
+        if (half > 0 && el.scrollLeft >= half) el.scrollLeft -= half;
+        if (el.scrollLeft < 0) el.scrollLeft += half;
       }
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [paused]);
+  }, [paused, reviews.length]);
+
+  const nudge = (dir: "prev" | "next") => {
+    const el = trackRef.current;
+    if (!el) return;
+    const amount = Math.max(320, Math.round(el.clientWidth * 0.6));
+    el.scrollBy({ left: dir === "next" ? amount : -amount, behavior: "smooth" });
+  };
 
   const loop = [...reviews, ...reviews];
 
   return (
     <div
-      className="relative overflow-hidden"
+      className="relative"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onTouchStart={() => setPaused(true)}
+      onTouchEnd={() => setPaused(false)}
     >
-      <div
-        ref={trackRef}
-        className="flex gap-4 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {loop.map((r, i) => (
-          <div key={`${r.id}-${i}`} className="w-[300px] shrink-0 md:w-[340px]">
-            <ReviewCard r={r} compact />
-          </div>
-        ))}
+      <div className="overflow-hidden">
+        <div
+          ref={trackRef}
+          className="flex gap-4 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {loop.map((r, i) => (
+            <div key={`${r.id}-${i}`} className="w-[300px] shrink-0 md:w-[340px]">
+              <ReviewCard r={r} compact />
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent md:w-24" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent md:w-24" />
+
+      <button
+        type="button"
+        onClick={() => nudge("prev")}
+        aria-label="Previous reviews"
+        className="absolute left-1 top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/90 p-2 text-brand shadow-card backdrop-blur transition hover:bg-brand hover:text-brand-foreground md:flex"
+      >
+        <ChevronLeft className="size-5" />
+      </button>
+      <button
+        type="button"
+        onClick={() => nudge("next")}
+        aria-label="Next reviews"
+        className="absolute right-1 top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/90 p-2 text-brand shadow-card backdrop-blur transition hover:bg-brand hover:text-brand-foreground md:flex"
+      >
+        <ChevronRight className="size-5" />
+      </button>
     </div>
   );
 }
 
 export function CustomerReviewsSection() {
-  const carouselReviews = useMemo(() => ALL_REVIEWS.slice(0, 20), []);
-  const gridReviews = useMemo(() => ALL_REVIEWS.slice(0, 6), []);
+  const allReviews = useAllReviews();
+  const [formOpen, setFormOpen] = useState(false);
+
+  const carouselReviews = useMemo(() => allReviews.slice(0, 24), [allReviews]);
+  const gridReviews = useMemo(() => allReviews.slice(0, 6), [allReviews]);
 
   return (
     <section className="section-pad bg-cream/40" aria-labelledby="reviews-heading">
@@ -150,11 +228,18 @@ export function CustomerReviewsSection() {
           <Link to="/reviews" className="btn-brand btn-brand-hover">
             View All Reviews
           </Link>
-          <Link to="/contact" className="btn-gold">
+          <button
+            type="button"
+            onClick={() => setFormOpen(true)}
+            className="btn-gold inline-flex items-center gap-2"
+          >
+            <PenLine className="size-4" />
             Write a Review
-          </Link>
+          </button>
         </div>
       </div>
+
+      <ReviewFormDialog open={formOpen} onOpenChange={setFormOpen} />
     </section>
   );
 }
