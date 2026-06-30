@@ -4,7 +4,7 @@ import { Search, Star, PenLine } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
 import { ReviewCard, ReviewStars, PagerButton } from "@/components/customer-reviews";
 import { ReviewFormDialog } from "@/components/review-form-dialog";
-import { ALL_REVIEWS, REVIEW_STATS, type Review } from "@/lib/reviews-data";
+import { REVIEW_STATS, type Review } from "@/lib/reviews-data";
 import { useAllReviews } from "@/lib/reviews-store";
 
 export const Route = createFileRoute("/reviews")({
