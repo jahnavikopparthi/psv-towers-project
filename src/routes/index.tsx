@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Bed, UtensilsCrossed, Shield, Utensils, Wifi, Camera, CheckCircle2, Building2, Smile } from "lucide-react";
 import psvBuilding from "@/assets/psv-building.jpg.asset.json";
-import { CustomerReviewsSection } from "@/components/customer-reviews";
+
 import hostelRoom from "@/assets/hostel-room.jpg";
 import foodBiryani from "@/assets/food-biryani.jpg";
 import diningArea from "@/assets/dining-area.jpg";
@@ -130,10 +130,8 @@ function Home() {
           </div>
         </div>
       </section>
-
-      {/* MIXED CUSTOMER REVIEWS */}
-      <CustomerReviewsSection />
     </>
+
   );
 }
 
