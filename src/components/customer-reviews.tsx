@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Star, Quote, ChevronLeft, ChevronRight, PenLine } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ALL_REVIEWS, avatarFor, REVIEW_STATS, type Review } from "@/lib/reviews-data";
+import { avatarFor, REVIEW_STATS, type Review, type ReviewType } from "@/lib/reviews-data";
 import { useAllReviews } from "@/lib/reviews-store";
 import { ReviewFormDialog } from "./review-form-dialog";
 
@@ -47,6 +47,7 @@ export function ReviewCard({ r, compact = false }: { r: Review; compact?: boolea
     .slice(0, 2)
     .join("")
     .toUpperCase();
+  const typeLabel = r.type === "Hostel" ? "Boys Hostel" : "Restaurant";
 
   return (
     <div className="card-soft flex h-full flex-col p-5">
@@ -67,7 +68,7 @@ export function ReviewCard({ r, compact = false }: { r: Review; compact?: boolea
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-semibold">{r.name}</div>
           <div className="text-[11px] uppercase tracking-wider text-brand">
-            {r.type} Customer
+            {typeLabel} Customer
           </div>
         </div>
         <Quote className="size-5 text-gold/60" />
@@ -110,21 +111,20 @@ function SummaryHeader() {
 }
 
 /** Auto-scrolling marquee carousel with arrows, pause-on-hover, infinite loop */
-function ReviewMarquee({ reviews }: { reviews: Review[] }) {
+export function ReviewMarquee({ reviews }: { reviews: Review[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
-    // initialize from 0 — looping wraps via half-width
     let raf = 0;
     let last = performance.now();
     const step = (now: number) => {
       const dt = now - last;
       last = now;
       if (el && !paused) {
-        el.scrollLeft += (dt / 1000) * 40; // 40px/sec
+        el.scrollLeft += (dt / 1000) * 40;
         const half = el.scrollWidth / 2;
         if (half > 0 && el.scrollLeft >= half) el.scrollLeft -= half;
         if (el.scrollLeft < 0) el.scrollLeft += half;
@@ -187,37 +187,55 @@ function ReviewMarquee({ reviews }: { reviews: Review[] }) {
   );
 }
 
-export function CustomerReviewsSection() {
-  const allReviews = useAllReviews();
+interface CustomerReviewsSectionProps {
+  filter?: ReviewType;
+  viewAllHref?: string;
+  heading?: string;
+  eyebrow?: string;
+  subheading?: string;
+}
+
+export function CustomerReviewsSection({
+  filter,
+  viewAllHref = "/reviews",
+  heading,
+  eyebrow = "Customer Reviews",
+  subheading,
+}: CustomerReviewsSectionProps = {}) {
+  const allReviews = useAllReviews(filter);
   const [formOpen, setFormOpen] = useState(false);
 
   const carouselReviews = useMemo(() => allReviews.slice(0, 24), [allReviews]);
   const gridReviews = useMemo(() => allReviews.slice(0, 6), [allReviews]);
 
+  const defaultHeading = filter === "Hostel"
+    ? "What Our Boys Hostel Residents Say"
+    : filter === "Restaurant"
+      ? "What Our Restaurant Guests Say"
+      : "What Our Customers Say";
+  const defaultSub = filter === "Hostel"
+    ? "Real experiences from students at P.S.V Towers Boys Hostel"
+    : filter === "Restaurant"
+      ? "Loved by families, students and food lovers across Vijayawada"
+      : "Trusted by Students & Food Lovers";
+
   return (
     <section className="section-pad bg-cream/40" aria-labelledby="reviews-heading">
       <div className="container-page">
         <div className="text-center">
-          <div className="eyebrow eyebrow-dot justify-center">Customer Reviews</div>
-          <h2
-            id="reviews-heading"
-            className="mt-2 font-display text-4xl font-bold"
-          >
-            What Our <span className="text-gold">Customers</span> Say
+          <div className="eyebrow eyebrow-dot justify-center">{eyebrow}</div>
+          <h2 id="reviews-heading" className="mt-2 font-display text-4xl font-bold">
+            {heading ?? defaultHeading.replace("Our", "Our ").replace(" Our ", " ")}
           </h2>
-          <p className="mt-2 text-muted-foreground">
-            Trusted by Students &amp; Food Lovers
-          </p>
+          <p className="mt-2 text-muted-foreground">{subheading ?? defaultSub}</p>
         </div>
 
         <div className="mt-8">
           <SummaryHeader />
         </div>
 
-        {/* Auto-scrolling carousel */}
         <ReviewMarquee reviews={carouselReviews} />
 
-        {/* Grid */}
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {gridReviews.map((r) => (
             <ReviewCard key={r.id} r={r} />
@@ -225,7 +243,7 @@ export function CustomerReviewsSection() {
         </div>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <Link to="/reviews" className="btn-brand btn-brand-hover">
+          <Link to={viewAllHref} className="btn-brand btn-brand-hover">
             View All Reviews
           </Link>
           <button
@@ -239,7 +257,7 @@ export function CustomerReviewsSection() {
         </div>
       </div>
 
-      <ReviewFormDialog open={formOpen} onOpenChange={setFormOpen} />
+      <ReviewFormDialog open={formOpen} onOpenChange={setFormOpen} lockedType={filter} />
     </section>
   );
 }

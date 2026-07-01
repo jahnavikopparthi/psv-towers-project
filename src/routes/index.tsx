@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Bed, UtensilsCrossed, Shield, Utensils, Wifi, Camera, CheckCircle2, Building2, Smile } from "lucide-react";
-import heroBuilding from "@/assets/hero-building.jpg";
+import psvBuilding from "@/assets/psv-building.jpg.asset.json";
+
 import hostelRoom from "@/assets/hostel-room.jpg";
 import foodBiryani from "@/assets/food-biryani.jpg";
 import diningArea from "@/assets/dining-area.jpg";
@@ -10,8 +11,8 @@ import foodDosa from "@/assets/food-dosa.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "P.S.V Towers — Girls Hostel & Family Restaurant in Vijayawada" },
-      { name: "description", content: "Safe girls hostel and delicious family restaurant in Governorpet, Vijayawada. 24/7 security, hygienic food, WiFi, CCTV." },
+      { title: "P.S.V Towers — Boys Hostel & Family Restaurant in Vijayawada" },
+      { name: "description", content: "Safe boys hostel and delicious family restaurant in Governorpet, Vijayawada. 24/7 security, hygienic food, WiFi, CCTV." },
     ],
   }),
   component: Home,
@@ -22,20 +23,20 @@ function Home() {
     <>
       {/* HERO */}
       <section className="relative overflow-hidden bg-[oklch(0.18_0.02_30)] text-white">
-        <img src={heroBuilding} alt="P.S.V Towers building" className="absolute inset-0 size-full object-cover opacity-55" width={1280} height={800} />
+        <img src={psvBuilding.url} alt="P.S.V Towers building exterior" className="absolute inset-0 size-full object-cover opacity-55" width={1280} height={800} />
         <div className="absolute inset-0 bg-gradient-to-r from-[oklch(0.15_0.02_30)]/90 via-[oklch(0.15_0.02_30)]/60 to-transparent" />
         <div className="container-page relative grid gap-10 py-20 md:grid-cols-2 md:py-28">
           <div>
             <span className="inline-block rounded-md bg-brand/80 px-3 py-1 text-xs font-medium tracking-wide">Comfort | Safety | Taste</span>
             <h1 className="mt-4 font-display text-5xl font-bold leading-tight md:text-6xl">P.S.V Towers</h1>
-            <p className="mt-2 text-2xl font-medium text-gold">Girls Hostel & Family Restaurant</p>
+            <p className="mt-2 text-2xl font-medium text-gold">Boys Hostel & Family Restaurant</p>
             <p className="mt-3 text-base text-white/85">Stay with Comfort, Eat with Taste</p>
 
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
               <div className="rounded-xl bg-brand p-5 shadow-elevated">
-                <div className="flex items-center gap-2 text-white"><Bed className="size-5" /><span className="font-semibold">Girls Hostel</span></div>
+                <div className="flex items-center gap-2 text-white"><Bed className="size-5" /><span className="font-semibold">Boys Hostel</span></div>
                 <p className="mt-1 text-xs text-white/80">Safe, Secure & Comfortable</p>
-                <Link to="/hostel" className="mt-4 block rounded-md bg-white py-2 text-center text-sm font-medium text-brand hover:bg-white/90">Explore Hostel</Link>
+                <Link to="/hostel" className="mt-4 block rounded-md bg-white py-2 text-center text-sm font-medium text-brand hover:bg-white/90">Explore Boys Hostel</Link>
               </div>
               <div className="rounded-xl bg-gold p-5 text-gold-foreground shadow-elevated">
                 <div className="flex items-center gap-2"><UtensilsCrossed className="size-5" /><span className="font-semibold">Restaurant</span></div>
@@ -68,17 +69,17 @@ function Home() {
               <div className="eyebrow eyebrow-dot">Our Facilities</div>
               <h2 className="mt-2 font-display text-4xl font-bold">Everything You Need,<br />All Under <span className="text-gold">One Roof</span></h2>
             </div>
-            <p className="text-muted-foreground">P.S.V Towers is the perfect blend of comfortable living and delicious dining for girls. Your safety, comfort, and satisfaction are our top priorities.</p>
+            <p className="text-muted-foreground">P.S.V Towers is the perfect blend of comfortable living and delicious dining. Your safety, comfort, and satisfaction are our top priorities.</p>
           </div>
 
           <div className="mt-10 grid gap-6 md:grid-cols-2">
             <FacilityCard
               icon={<Bed className="size-6" />}
               tint="brand"
-              title="Girls Hostel"
+              title="Boys Hostel"
               items={["Spacious & Clean Rooms","24/7 Security & CCTV","WiFi & Study Environment","Nutritious Homemade Food","Laundry & Housekeeping","RO Water & Power Backup"]}
               image={hostelRoom}
-              cta={{ to: "/hostel", label: "View Hostel Details" }}
+              cta={{ to: "/hostel", label: "View Boys Hostel Details" }}
             />
             <FacilityCard
               icon={<UtensilsCrossed className="size-6" />}
@@ -98,7 +99,7 @@ function Home() {
           <div>
             <div className="eyebrow eyebrow-dot">About Us</div>
             <h2 className="mt-2 font-display text-4xl font-bold">A Place Where<br />Comfort Meets Care</h2>
-            <p className="mt-4 text-sm text-muted-foreground">P.S.V Towers provides a safe and homely environment for girls to live and grow. Along with that, our restaurant serves delicious and <span className="font-semibold text-foreground">hygienic food</span> that feels like home.</p>
+            <p className="mt-4 text-sm text-muted-foreground">P.S.V Towers provides a safe and homely environment for boys to live and grow. Along with that, our restaurant serves delicious and <span className="font-semibold text-foreground">hygienic food</span> that feels like home.</p>
             <Link to="/about" className="btn-brand btn-brand-hover mt-6">Know More About Us</Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
@@ -130,6 +131,7 @@ function Home() {
         </div>
       </section>
     </>
+
   );
 }
 

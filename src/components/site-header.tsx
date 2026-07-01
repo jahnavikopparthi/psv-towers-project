@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const nav = [
   { to: "/", label: "Home" },
-  { to: "/hostel", label: "Hostel" },
+  { to: "/hostel", label: "Boys Hostel" },
   { to: "/restaurant", label: "Restaurant" },
   { to: "/about", label: "About Us" },
   { to: "/gallery", label: "Gallery" },
@@ -18,7 +18,7 @@ export function SiteHeader() {
       <div className="container-page flex h-16 items-center justify-between gap-4">
         <Link to="/" className="flex flex-col leading-tight">
           <span className="font-display text-2xl font-bold text-brand">P.S.V Towers</span>
-          <span className="text-[11px] text-muted-foreground">Girls Hostel & Family Restaurant</span>
+          <span className="text-[11px] text-muted-foreground">Boys Hostel & Family Restaurant</span>
         </Link>
         <nav className="hidden items-center gap-7 md:flex">
           {nav.map(n => (

@@ -58,12 +58,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "P.S.V Towers — Girls Hostel & Family Restaurant" },
-      { name: "description", content: "Safe, comfortable girls hostel and delicious family restaurant in Governorpet, Vijayawada." },
-      { property: "og:title", content: "P.S.V Towers — Girls Hostel & Family Restaurant" },
-      { name: "twitter:title", content: "P.S.V Towers — Girls Hostel & Family Restaurant" },
-      { property: "og:description", content: "Safe, comfortable girls hostel and delicious family restaurant in Governorpet, Vijayawada." },
-      { name: "twitter:description", content: "Safe, comfortable girls hostel and delicious family restaurant in Governorpet, Vijayawada." },
+      { title: "P.S.V Towers — Boys Hostel & Family Restaurant" },
+      { name: "description", content: "Safe, comfortable boys hostel and delicious family restaurant in Governorpet, Vijayawada." },
+      { property: "og:title", content: "P.S.V Towers — Boys Hostel & Family Restaurant" },
+      { name: "twitter:title", content: "P.S.V Towers — Boys Hostel & Family Restaurant" },
+      { property: "og:description", content: "Safe, comfortable boys hostel and delicious family restaurant in Governorpet, Vijayawada." },
+      { name: "twitter:description", content: "Safe, comfortable boys hostel and delicious family restaurant in Governorpet, Vijayawada." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/XTLKp3av2XPUFaYdCmwsPTy4MTg2/social-images/social-1782548043070-WhatsApp_Image_2026-06-27_at_10.49.25_AM.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/XTLKp3av2XPUFaYdCmwsPTy4MTg2/social-images/social-1782548043070-WhatsApp_Image_2026-06-27_at_10.49.25_AM.webp" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -94,7 +94,10 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const hideReviews = pathname.startsWith("/reviews");
+  const hideReviews =
+    pathname.startsWith("/reviews") ||
+    pathname.startsWith("/hostel") ||
+    pathname.startsWith("/restaurant");
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex min-h-screen flex-col">

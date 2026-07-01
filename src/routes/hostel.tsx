@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Shield, Wifi, Utensils, Droplets, Camera, Sparkles, BedDouble, CheckCircle2 } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
+import { CustomerReviewsSection } from "@/components/customer-reviews";
 import hostelRoom from "@/assets/hostel-room.jpg";
 import building from "@/assets/building.jpg";
 
 export const Route = createFileRoute("/hostel")({
-  head: () => ({ meta: [{ title: "Girls Hostel — P.S.V Towers" }, { name: "description", content: "Safe, secure girls hostel with 24/7 security, WiFi, CCTV, homely food in Vijayawada." }] }),
+  head: () => ({ meta: [{ title: "Boys Hostel — P.S.V Towers" }, { name: "description", content: "Safe, secure boys hostel with 24/7 security, WiFi, CCTV, homely food in Vijayawada." }] }),
   component: HostelPage,
 });
 
@@ -27,7 +28,7 @@ const rooms = [
 function HostelPage() {
   return (
     <>
-      <PageHero eyebrow="Girls Hostel" title="Safe, Secure & Comfortable Living" subtitle="A homely environment for girls to live, study and grow — with 24/7 security and all modern amenities.">
+      <PageHero eyebrow="Boys Hostel" title="Safe, Secure & Comfortable Living" subtitle="A homely environment for boys to live, study and grow — with 24/7 security and all modern amenities.">
         <div className="flex flex-wrap gap-3">
           <Link to="/enquiry" className="btn-brand btn-brand-hover">Apply for Admission</Link>
           <Link to="/contact" className="btn-gold">Visit Us</Link>
@@ -36,7 +37,7 @@ function HostelPage() {
 
       <section className="section-pad">
         <div className="container-page grid gap-10 md:grid-cols-2 md:items-center">
-          <img src={hostelRoom} alt="Hostel room" className="rounded-2xl shadow-elevated" loading="lazy" />
+          <img src={hostelRoom} alt="Boys Hostel room" className="rounded-2xl shadow-elevated" loading="lazy" />
           <div>
             <div className="eyebrow eyebrow-dot">Why Choose Us</div>
             <h2 className="mt-2 font-display text-3xl font-bold">Everything a Student Needs</h2>
@@ -84,6 +85,9 @@ function HostelPage() {
           <img src={building} alt="Building" className="rounded-2xl shadow-elevated" loading="lazy" />
         </div>
       </section>
+
+      {/* Boys Hostel only reviews */}
+      <CustomerReviewsSection filter="Hostel" viewAllHref="/reviews/hostel" />
     </>
   );
 }

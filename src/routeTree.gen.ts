@@ -20,6 +20,8 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ReviewsRestaurantRouteImport } from './routes/reviews.restaurant'
+import { Route as ReviewsHostelRouteImport } from './routes/reviews.hostel'
 
 const ReviewsRoute = ReviewsRouteImport.update({
   id: '/reviews',
@@ -76,6 +78,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReviewsRestaurantRoute = ReviewsRestaurantRouteImport.update({
+  id: '/restaurant',
+  path: '/restaurant',
+  getParentRoute: () => ReviewsRoute,
+} as any)
+const ReviewsHostelRoute = ReviewsHostelRouteImport.update({
+  id: '/hostel',
+  path: '/hostel',
+  getParentRoute: () => ReviewsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -88,7 +100,9 @@ export interface FileRoutesByFullPath {
   '/hostel': typeof HostelRoute
   '/menu': typeof MenuRoute
   '/restaurant': typeof RestaurantRoute
-  '/reviews': typeof ReviewsRoute
+  '/reviews': typeof ReviewsRouteWithChildren
+  '/reviews/hostel': typeof ReviewsHostelRoute
+  '/reviews/restaurant': typeof ReviewsRestaurantRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -101,7 +115,9 @@ export interface FileRoutesByTo {
   '/hostel': typeof HostelRoute
   '/menu': typeof MenuRoute
   '/restaurant': typeof RestaurantRoute
-  '/reviews': typeof ReviewsRoute
+  '/reviews': typeof ReviewsRouteWithChildren
+  '/reviews/hostel': typeof ReviewsHostelRoute
+  '/reviews/restaurant': typeof ReviewsRestaurantRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -115,7 +131,9 @@ export interface FileRoutesById {
   '/hostel': typeof HostelRoute
   '/menu': typeof MenuRoute
   '/restaurant': typeof RestaurantRoute
-  '/reviews': typeof ReviewsRoute
+  '/reviews': typeof ReviewsRouteWithChildren
+  '/reviews/hostel': typeof ReviewsHostelRoute
+  '/reviews/restaurant': typeof ReviewsRestaurantRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,6 +149,8 @@ export interface FileRouteTypes {
     | '/menu'
     | '/restaurant'
     | '/reviews'
+    | '/reviews/hostel'
+    | '/reviews/restaurant'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -144,6 +164,8 @@ export interface FileRouteTypes {
     | '/menu'
     | '/restaurant'
     | '/reviews'
+    | '/reviews/hostel'
+    | '/reviews/restaurant'
   id:
     | '__root__'
     | '/'
@@ -157,6 +179,8 @@ export interface FileRouteTypes {
     | '/menu'
     | '/restaurant'
     | '/reviews'
+    | '/reviews/hostel'
+    | '/reviews/restaurant'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -170,7 +194,7 @@ export interface RootRouteChildren {
   HostelRoute: typeof HostelRoute
   MenuRoute: typeof MenuRoute
   RestaurantRoute: typeof RestaurantRoute
-  ReviewsRoute: typeof ReviewsRoute
+  ReviewsRoute: typeof ReviewsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -252,8 +276,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reviews/restaurant': {
+      id: '/reviews/restaurant'
+      path: '/restaurant'
+      fullPath: '/reviews/restaurant'
+      preLoaderRoute: typeof ReviewsRestaurantRouteImport
+      parentRoute: typeof ReviewsRoute
+    }
+    '/reviews/hostel': {
+      id: '/reviews/hostel'
+      path: '/hostel'
+      fullPath: '/reviews/hostel'
+      preLoaderRoute: typeof ReviewsHostelRouteImport
+      parentRoute: typeof ReviewsRoute
+    }
   }
 }
+
+interface ReviewsRouteChildren {
+  ReviewsHostelRoute: typeof ReviewsHostelRoute
+  ReviewsRestaurantRoute: typeof ReviewsRestaurantRoute
+}
+
+const ReviewsRouteChildren: ReviewsRouteChildren = {
+  ReviewsHostelRoute: ReviewsHostelRoute,
+  ReviewsRestaurantRoute: ReviewsRestaurantRoute,
+}
+
+const ReviewsRouteWithChildren =
+  ReviewsRoute._addFileChildren(ReviewsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -266,18 +317,8 @@ const rootRouteChildren: RootRouteChildren = {
   HostelRoute: HostelRoute,
   MenuRoute: MenuRoute,
   RestaurantRoute: RestaurantRoute,
-  ReviewsRoute: ReviewsRoute,
+  ReviewsRoute: ReviewsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
