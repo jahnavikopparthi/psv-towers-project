@@ -94,7 +94,10 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const hideReviews = pathname.startsWith("/reviews");
+  const hideReviews =
+    pathname.startsWith("/reviews") ||
+    pathname.startsWith("/hostel") ||
+    pathname.startsWith("/restaurant");
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex min-h-screen flex-col">
