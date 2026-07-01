@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Star, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -18,25 +18,31 @@ import { detectGender, type Gender, type ReviewType } from "@/lib/reviews-data";
 interface ReviewFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** When provided, users cannot switch review type — used from Hostel / Restaurant pages. */
+  lockedType?: ReviewType;
 }
 
-export function ReviewFormDialog({ open, onOpenChange }: ReviewFormDialogProps) {
+export function ReviewFormDialog({ open, onOpenChange, lockedType }: ReviewFormDialogProps) {
   const [name, setName] = useState("");
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
-  const [type, setType] = useState<ReviewType>("Hostel");
+  const [type, setType] = useState<ReviewType>(lockedType ?? "Hostel");
   const [gender, setGender] = useState<Gender | "auto">("auto");
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (lockedType) setType(lockedType);
+  }, [lockedType, open]);
 
   function reset() {
     setName("");
     setRating(5);
     setTitle("");
     setText("");
-    setType("Hostel");
+    setType(lockedType ?? "Hostel");
     setGender("auto");
     setErrors({});
   }
@@ -58,9 +64,14 @@ export function ReviewFormDialog({ open, onOpenChange }: ReviewFormDialogProps) 
     ev.preventDefault();
     if (!validate()) return;
     setSubmitting(true);
-    // small UX delay
     setTimeout(() => {
-      const finalGender: Gender = gender === "auto" ? detectGender(name) : gender;
+      // Boys Hostel reviews are male-only
+      const finalGender: Gender =
+        type === "Hostel"
+          ? "male"
+          : gender === "auto"
+            ? detectGender(name)
+            : gender;
       addReview({
         name: name.trim(),
         rating,
@@ -76,6 +87,8 @@ export function ReviewFormDialog({ open, onOpenChange }: ReviewFormDialogProps) 
     }, 350);
   }
 
+  const typeLabel = type === "Hostel" ? "Boys Hostel" : "Restaurant";
+
   return (
     <Dialog
       open={open}
@@ -87,7 +100,7 @@ export function ReviewFormDialog({ open, onOpenChange }: ReviewFormDialogProps) 
       <DialogContent className="max-w-lg border-brand/20 bg-card">
         <DialogHeader>
           <DialogTitle className="font-display text-2xl text-brand">
-            Write a Review
+            Write a {lockedType ? typeLabel : ""} Review
           </DialogTitle>
           <DialogDescription>
             Share your honest experience — it helps other families and food lovers.
@@ -101,7 +114,7 @@ export function ReviewFormDialog({ open, onOpenChange }: ReviewFormDialogProps) 
               id="rv-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Sneha Reddy"
+              placeholder="e.g. Rahul Reddy"
               maxLength={60}
             />
             {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
@@ -110,42 +123,50 @@ export function ReviewFormDialog({ open, onOpenChange }: ReviewFormDialogProps) 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label>Review For</Label>
-              <div className="flex gap-2">
-                {(["Hostel", "Restaurant"] as ReviewType[]).map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setType(t)}
-                    className={`flex-1 rounded-md border px-3 py-1.5 text-xs font-medium uppercase tracking-wider transition ${
-                      type === t
-                        ? "border-brand bg-brand text-brand-foreground"
-                        : "border-border bg-card text-muted-foreground hover:border-brand"
-                    }`}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
+              {lockedType ? (
+                <div className="rounded-md border border-brand bg-brand px-3 py-1.5 text-center text-xs font-medium uppercase tracking-wider text-brand-foreground">
+                  {typeLabel}
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  {(["Hostel", "Restaurant"] as ReviewType[]).map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setType(t)}
+                      className={`flex-1 rounded-md border px-3 py-1.5 text-xs font-medium uppercase tracking-wider transition ${
+                        type === t
+                          ? "border-brand bg-brand text-brand-foreground"
+                          : "border-border bg-card text-muted-foreground hover:border-brand"
+                      }`}
+                    >
+                      {t === "Hostel" ? "Boys Hostel" : "Restaurant"}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-            <div className="space-y-1.5">
-              <Label>Profile Photo</Label>
-              <div className="flex gap-1.5">
-                {(["auto", "female", "male"] as const).map((g) => (
-                  <button
-                    key={g}
-                    type="button"
-                    onClick={() => setGender(g)}
-                    className={`flex-1 rounded-md border px-2 py-1.5 text-[11px] font-medium capitalize transition ${
-                      gender === g
-                        ? "border-brand bg-brand text-brand-foreground"
-                        : "border-border bg-card text-muted-foreground hover:border-brand"
-                    }`}
-                  >
-                    {g}
-                  </button>
-                ))}
+            {type === "Restaurant" && (
+              <div className="space-y-1.5">
+                <Label>Profile Photo</Label>
+                <div className="flex gap-1.5">
+                  {(["auto", "female", "male"] as const).map((g) => (
+                    <button
+                      key={g}
+                      type="button"
+                      onClick={() => setGender(g)}
+                      className={`flex-1 rounded-md border px-2 py-1.5 text-[11px] font-medium capitalize transition ${
+                        gender === g
+                          ? "border-brand bg-brand text-brand-foreground"
+                          : "border-border bg-card text-muted-foreground hover:border-brand"
+                      }`}
+                    >
+                      {g}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="space-y-1.5">
