@@ -15,15 +15,15 @@ const stats = [
 ];
 
 const enquiries = [
-  { n: "Priya R.", p: "98**** 12", t: "Hostel — 3 Sharing", d: "2 hours ago" },
-  { n: "Sneha K.", p: "98**** 88", t: "Hostel — AC Room", d: "Today" },
+  { n: "Rahul R.", p: "98**** 12", t: "Boys Hostel — 3 Sharing", d: "2 hours ago" },
+  { n: "Arjun K.", p: "98**** 88", t: "Boys Hostel — AC Room", d: "Today" },
   { n: "Anjali M.", p: "99**** 41", t: "Restaurant Parcel", d: "Yesterday" },
 ];
 
 function Dashboard() {
   return (
     <>
-      <PageHero eyebrow="Owner Dashboard" title="P.S.V Towers Overview" subtitle="A quick snapshot of hostel occupancy, restaurant orders, and recent enquiries.">
+      <PageHero eyebrow="Owner Dashboard" title="P.S.V Towers Overview" subtitle="A quick snapshot of boys hostel occupancy, restaurant orders, and recent enquiries.">
         <div className="flex flex-wrap gap-3">
           <Link to="/enquiry" className="btn-brand btn-brand-hover">View Enquiries</Link>
           <Link to="/menu" className="btn-gold">Manage Menu</Link>
