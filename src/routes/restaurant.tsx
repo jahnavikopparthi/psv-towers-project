@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { UtensilsCrossed, Leaf, Drumstick, Clock, BadgePercent } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
+import { CustomerReviewsSection } from "@/components/customer-reviews";
 import foodBiryani from "@/assets/food-biryani.jpg";
 import foodDosa from "@/assets/food-dosa.jpg";
 import diningArea from "@/assets/dining-area.jpg";
@@ -14,7 +15,7 @@ const highlights = [
   { i: Leaf, t: "Pure Veg Options", d: "Fresh, hygienic vegetarian curries, tiffins and meals." },
   { i: Drumstick, t: "Non-Veg Specialties", d: "Famous biryanis, chicken & mutton curries." },
   { i: Clock, t: "All-Day Service", d: "Breakfast, lunch, dinner & parcel/take-away." },
-  { i: BadgePercent, t: "Hostel Discounts", d: "Special pricing for hostel residents." },
+  { i: BadgePercent, t: "Hostel Discounts", d: "Special pricing for boys hostel residents." },
 ];
 
 function RestaurantPage() {
@@ -54,6 +55,9 @@ function RestaurantPage() {
           </div>
         </div>
       </section>
+
+      {/* Restaurant only reviews */}
+      <CustomerReviewsSection filter="Restaurant" viewAllHref="/reviews/restaurant" />
     </>
   );
 }
