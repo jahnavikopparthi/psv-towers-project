@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { ALL_REVIEWS, type Gender, type Review, type ReviewType } from "./reviews-data";
 
-const STORAGE_KEY = "psv_user_reviews_v1";
+const STORAGE_KEY = "psv_user_reviews_v2";
 
 function loadInitial(): Review[] {
   if (typeof window === "undefined") return [];
@@ -48,9 +48,10 @@ export function useUserReviews(): Review[] {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
 
-export function useAllReviews(): Review[] {
+export function useAllReviews(filter?: ReviewType): Review[] {
   const u = useUserReviews();
-  return [...u, ...ALL_REVIEWS];
+  const merged = [...u, ...ALL_REVIEWS];
+  return filter ? merged.filter((r) => r.type === filter) : merged;
 }
 
 export interface NewReviewInput {
