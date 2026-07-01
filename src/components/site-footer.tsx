@@ -31,14 +31,14 @@ export function SiteFooter() {
         <div className="container-page grid gap-8 py-12 md:grid-cols-4">
           <div>
             <h4 className="font-display text-xl font-bold text-brand">P.S.V Towers</h4>
-            <p className="mt-2 text-sm text-muted-foreground">Girls Hostel & Family Restaurant.<br />Comfortable Stay. Delicious Food. Happy You.</p>
+            <p className="mt-2 text-sm text-muted-foreground">Boys Hostel & Family Restaurant.<br />Comfortable Stay. Delicious Food. Happy You.</p>
           </div>
           <div>
             <h5 className="text-sm font-semibold">Quick Links</h5>
             <ul className="mt-3 grid grid-cols-2 gap-y-2 text-sm text-muted-foreground">
               <li><Link to="/" className="hover:text-brand">Home</Link></li>
               <li><Link to="/about" className="hover:text-brand">About Us</Link></li>
-              <li><Link to="/hostel" className="hover:text-brand">Hostel</Link></li>
+              <li><Link to="/hostel" className="hover:text-brand">Boys Hostel</Link></li>
               <li><Link to="/gallery" className="hover:text-brand">Gallery</Link></li>
               <li><Link to="/restaurant" className="hover:text-brand">Restaurant</Link></li>
               <li><Link to="/contact" className="hover:text-brand">Contact</Link></li>
