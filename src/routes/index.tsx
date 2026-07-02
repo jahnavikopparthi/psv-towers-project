@@ -23,8 +23,9 @@ function Home() {
     <>
       {/* HERO */}
       <section className="relative overflow-hidden bg-[oklch(0.18_0.02_30)] text-white">
-        <img src={psvBuilding.url} alt="P.S.V Towers building exterior" className="absolute inset-0 size-full object-cover opacity-55" width={1280} height={800} />
-        <div className="absolute inset-0 bg-gradient-to-r from-[oklch(0.15_0.02_30)]/90 via-[oklch(0.15_0.02_30)]/60 to-transparent" />
+        <img src={psvBuilding.url} alt="P.S.V Towers building exterior" className="absolute inset-0 size-full object-cover" width={1280} height={800} />
+        <div className="absolute inset-0 bg-black/45" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[oklch(0.15_0.02_30)]/70 via-[oklch(0.15_0.02_30)]/40 to-transparent" />
         <div className="container-page relative grid gap-10 py-20 md:grid-cols-2 md:py-28">
           <div>
             <span className="inline-block rounded-md bg-brand/80 px-3 py-1 text-xs font-medium tracking-wide">Comfort | Safety | Taste</span>
